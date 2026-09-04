@@ -1,6 +1,8 @@
 <?php
 
+use App\Filament\Widgets\StatsOverview;
 use App\Models\User;
+use Livewire\Livewire;
 
 test('un utilisateur non-admin ne peut pas accéder au panel admin', function () {
     $user = User::factory()->create(['is_admin' => false]);
@@ -16,6 +18,14 @@ test('un utilisateur admin peut accéder au panel admin', function () {
     $response = $this->actingAs($admin)->get('/admin');
 
     $response->assertOk();
+});
+
+test('le dashboard admin affiche les statistiques', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+
+    Livewire::actingAs($admin)
+        ->test(StatsOverview::class)
+        ->assertSeeText("Chiffre d'affaires");
 });
 
 test('un visiteur non authentifié est redirigé vers la connexion', function () {
