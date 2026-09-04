@@ -21,9 +21,15 @@
                     <a href="{{ route('about') }}" class="hover:text-stone-600">À propos</a>
                 </nav>
 
-                <a href="{{ route('cart.show') }}" class="rounded-full border border-stone-300 px-4 py-2 text-sm hover:border-stone-400">
-                    Panier
-                </a>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('filament.admin.auth.login') }}" class="hidden text-sm hover:text-stone-600 sm:inline">
+                        Connexion
+                    </a>
+
+                    <a href="{{ route('cart.show') }}" class="rounded-full border border-stone-300 px-4 py-2 text-sm hover:border-stone-400">
+                        Panier
+                    </a>
+                </div>
             </div>
         </header>
 
