@@ -23,9 +23,10 @@ php artisan migrate
 # Développement (serveur + queue + logs + Vite en parallèle, via composer.json "dev")
 composer dev
 
-# Tests (PHPUnit, pas Pest)
+# Tests (Pest)
 php artisan test
 php artisan test --filter=NomDuTest
+./vendor/bin/pest
 
 # Migrations
 php artisan migrate
@@ -47,14 +48,14 @@ npm run build  # production
 | Laravel | ^13.17 (installé : 13.30.1) | Backend |
 | Tailwind CSS | ^4.0.0 (plugin Vite) | Styling |
 | Vite | ^8.0.0 | Bundler front-end |
-| PHPUnit | ^12.5 | Tests |
+| Pest | ^4.7 | Tests |
 | Laravel Pint | ^1.27 | Linting/formatting |
 | SQLite | — | Base de données par défaut (`DB_CONNECTION=sqlite`) |
 | Laravel Tinker | ^3.0 | REPL |
 
 **Non installés actuellement** (mentionnés dans une ancienne version de ce fichier, à
 réintroduire ici seulement une fois réellement ajoutés au projet) : Livewire, Volt,
-Alpine.js, DaisyUI, Mary UI, Stripe PHP, Laravel DomPDF, Darryldecode Cart, Pest,
+Alpine.js, DaisyUI, Mary UI, Stripe PHP, Laravel DomPDF, Darryldecode Cart,
 PHPStan/Larastan, Rector, Filament, Spatie Permission, Mews Purifier, Intervention Image.
 
 ## Architecture actuelle
@@ -101,10 +102,10 @@ nouveau modèle.
 
 ## Tests
 
-- Le projet utilise **PHPUnit** natif (pas Pest — `pestphp/pest` n'est pas une
-  dépendance).
+- Le projet utilise **Pest** (`pestphp/pest` + `pestphp/pest-plugin-laravel`).
 - `tests/Unit/` — logique métier isolée.
 - `tests/Feature/` — workflows HTTP, contrôleurs.
+- `tests/Pest.php` — configuration Pest (binding de `Tests\TestCase` sur `Feature` et `Unit`).
 - `phpunit.xml` configure SQLite en mémoire (`:memory:`) pour les tests.
 
 ## Configuration
@@ -273,18 +274,20 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
 - Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
 
-=== phpunit/core rules ===
+=== pest/core rules ===
 
-# PHPUnit
+# Pest
 
-- This project uses PHPUnit. Create tests with `php artisan make:test --phpunit {name}`.
+- This project uses Pest. Create tests with `php artisan make:test --pest {name}`.
 - Do not include the test suite directory in `{name}`. Use `SomeFeatureTest`, not `Feature/SomeFeatureTest`.
 - Read the `testing-best-practices` skill for guidance on coverage, naming, structure, dependency isolation, and review.
+- Do not delete tests or test files without approval. They are part of the application.
 
 ## Running Tests
 
 - Run the narrowest set of tests that covers the change. Pass a file path or `--filter=testName` to `php artisan test --compact`.
 - Rerun a test after each change to it.
-- Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
+- Run `vendor/bin/pest` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
+- After the feature tests pass, ask the user to run the complete suite with `php artisan test --compact`.
 
 </laravel-boost-guidelines>
