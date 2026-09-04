@@ -14,18 +14,22 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nom')
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('Adresse email')
                     ->email()
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
+                DateTimePicker::make('email_verified_at')
+                    ->label('Email vérifié le'),
                 TextInput::make('password')
+                    ->label('Mot de passe')
                     ->password()
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->minLength(8),
                 Toggle::make('is_admin')
+                    ->label('Administrateur')
                     ->required(),
             ]);
     }

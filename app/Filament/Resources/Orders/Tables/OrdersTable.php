@@ -15,23 +15,29 @@ class OrdersTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
+                    ->label('Client')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Adresse email')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->label('Statut')
                     ->badge()
                     ->searchable(),
                 TextColumn::make('total')
+                    ->label('Total')
                     ->money('EUR')
                     ->sortable(),
                 TextColumn::make('stripe_session_id')
+                    ->label('Identifiant session Stripe')
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Créée le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Modifiée le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

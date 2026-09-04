@@ -14,10 +14,13 @@ class CategoryForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nom')
                     ->required(),
                 TextInput::make('slug')
+                    ->label('Slug')
                     ->required(),
                 Select::make('type')
+                    ->label('Type')
                     ->options(TambourCategoryType::class)
                     ->required(),
             ]);
