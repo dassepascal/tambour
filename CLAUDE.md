@@ -4,11 +4,11 @@ Ce fichier guide Claude Code (claude.ai/code) dans ce dépôt.
 
 ## État du projet
 
-Squelette Laravel fraîchement initialisé (`laravel new`). Aucune fonctionnalité métier,
-aucun dépôt git initialisé, aucune des briques applicatives (Volt, Livewire, Filament,
-Stripe, panier, PDF, etc.) n'est encore installée. Ce document décrit l'état **réel** du
-code — à mettre à jour au fur et à mesure que le projet évolue, plutôt que de documenter
-une architecture cible non encore construite.
+Site e-commerce de tambours chamaniques bâti sur Laravel 13. Structure de base en place :
+catalogue de produits (tambours/accessoires), fiche produit avec galerie et lecteur audio,
+panier en session, amorce de checkout Stripe. Ce document décrit l'état **réel** du code —
+à mettre à jour au fur et à mesure que le projet évolue, plutôt que de documenter une
+architecture cible non encore construite.
 
 ## Commandes essentielles
 
@@ -50,42 +50,69 @@ npm run build  # production
 | Vite | ^8.0.0 | Bundler front-end |
 | Pest | ^4.7 | Tests |
 | Laravel Pint | ^1.27 | Linting/formatting |
+| Alpine.js | (npm) | Interactivité front (lecteur audio, etc.) |
+| Spatie Media Library | ^11.23 | Galeries photo/audio des produits |
+| Stripe PHP | ^21.3 | Paiement (Stripe Checkout) |
 | SQLite | — | Base de données par défaut (`DB_CONNECTION=sqlite`) |
 | Laravel Tinker | ^3.0 | REPL |
 
 **Non installés actuellement** (mentionnés dans une ancienne version de ce fichier, à
 réintroduire ici seulement une fois réellement ajoutés au projet) : Livewire, Volt,
-Alpine.js, DaisyUI, Mary UI, Stripe PHP, Laravel DomPDF, Darryldecode Cart,
-PHPStan/Larastan, Rector, Filament, Spatie Permission, Mews Purifier, Intervention Image.
+DaisyUI, Mary UI, Laravel DomPDF, Darryldecode Cart, PHPStan/Larastan, Rector, Filament,
+Spatie Permission, Mews Purifier, Intervention Image.
 
 ## Architecture actuelle
 
 ```
 app/
+├── Enums/
+│   ├── TambourCategoryType.php   # Tambour | Accessoire
+│   └── OrderStatus.php           # Pending | Paid | Cancelled
 ├── Http/
 │   └── Controllers/
-│       └── Controller.php   # Contrôleur de base, vide
+│       ├── HomeController.php
+│       ├── ProductController.php   # catalogue + fiche produit
+│       ├── CartController.php      # panier en session
+│       ├── CheckoutController.php  # Stripe Checkout
+│       └── PageController.php      # À propos / Guide
 ├── Models/
-│   └── User.php             # Seul modèle existant
+│   ├── User.php
+│   ├── Category.php
+│   ├── Product.php   # HasMedia (galerie + son)
+│   ├── Order.php
+│   └── OrderItem.php
+├── Services/
+│   ├── CartService.php       # panier stocké en session
+│   └── CheckoutService.php   # création commande + session Stripe
 └── Providers/
     └── AppServiceProvider.php
 
 resources/
 ├── views/
-│   └── welcome.blade.php    # Page d'accueil par défaut Laravel
-└── css/, js/                # Assets Vite/Tailwind par défaut
+│   ├── layouts/app.blade.php
+│   ├── home.blade.php
+│   ├── products/{index,show}.blade.php
+│   ├── cart/show.blade.php
+│   ├── checkout/{success,cancel}.blade.php
+│   ├── pages/{about,guide}.blade.php
+│   └── components/{product-card,audio-player}.blade.php
+└── css/, js/                # Tailwind + Alpine.js via Vite
 
 routes/
-└── web.php                  # Route unique : GET / → welcome
+└── web.php
 
 tests/
-├── Unit/
-└── Feature/
+├── Unit/CartServiceTest.php
+└── Feature/{HomePageTest,ProductPageTest,CartTest}.php
 ```
 
-Aucun dossier `Services/`, `Actions/`, `Rules/`, `Repositories/`, `Mail/`,
-`Notifications/`, `Traits/`, `View/Components/`, `Filament/` n'existe pour l'instant.
-Créer ces dossiers seulement quand un besoin réel se présente, pas par anticipation.
+Aucun dossier `Actions/`, `Rules/`, `Repositories/`, `Mail/`, `Notifications/`,
+`Traits/`, `Filament/` n'existe pour l'instant. Créer ces dossiers seulement quand un
+besoin réel se présente, pas par anticipation.
+
+Le panier vit en session (pas de modèle `Cart` en base) via `App\Services\CartService`.
+L'intégration Stripe Checkout est branchée (`App\Services\CheckoutService`) mais nécessite
+les clés `STRIPE_KEY`/`STRIPE_SECRET` dans `.env` pour fonctionner réellement.
 
 ## Conventions modèles
 
@@ -236,6 +263,15 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 # Deployment
 
 - Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
+
+=== tests rules ===
+
+# Test Enforcement
+
+- Test every code change by adding or updating a test.
+- Run the affected tests and ensure they pass.
+- Test the changed behavior and its important failure modes, but do not add tests beyond them.
+- Read the `testing-best-practices` skill before writing tests.
 
 === laravel/core rules ===
 
