@@ -6,7 +6,8 @@ Ce fichier guide Claude Code (claude.ai/code) dans ce dépôt.
 
 Site e-commerce de tambours chamaniques bâti sur Laravel 13. Structure de base en place :
 catalogue de produits (tambours/accessoires), fiche produit avec galerie et lecteur audio,
-panier en session, amorce de checkout Stripe. Ce document décrit l'état **réel** du code —
+panier en session, amorce de checkout Stripe, panel d'administration Filament (`/admin`)
+réservé aux utilisateurs `is_admin`. Ce document décrit l'état **réel** du code —
 à mettre à jour au fur et à mesure que le projet évolue, plutôt que de documenter une
 architecture cible non encore construite.
 
@@ -53,13 +54,17 @@ npm run build  # production
 | Alpine.js | (npm) | Interactivité front (lecteur audio, etc.) |
 | Spatie Media Library | ^11.23 | Galeries photo/audio des produits |
 | Stripe PHP | ^21.3 | Paiement (Stripe Checkout) |
-| SQLite | — | Base de données par défaut (`DB_CONNECTION=sqlite`) |
+| Filament | ^4.0 | Panel d'administration (`/admin`) |
+| MySQL | — | Base de données de dev (`DB_CONNECTION=mysql`, base `laraveltambour`) |
 | Laravel Tinker | ^3.0 | REPL |
 
 **Non installés actuellement** (mentionnés dans une ancienne version de ce fichier, à
 réintroduire ici seulement une fois réellement ajoutés au projet) : Livewire, Volt,
-DaisyUI, Mary UI, Laravel DomPDF, Darryldecode Cart, PHPStan/Larastan, Rector, Filament,
+DaisyUI, Mary UI, Laravel DomPDF, Darryldecode Cart, PHPStan/Larastan, Rector,
 Spatie Permission, Mews Purifier, Intervention Image.
+
+Les tests utilisent toujours SQLite en mémoire (`phpunit.xml`), indépendamment de la
+base MySQL de développement.
 
 ## Architecture actuelle
 
@@ -84,8 +89,11 @@ app/
 ├── Services/
 │   ├── CartService.php       # panier stocké en session
 │   └── CheckoutService.php   # création commande + session Stripe
+├── Filament/
+│   └── Resources/            # ProductResource, CategoryResource, OrderResource, UserResource
 └── Providers/
-    └── AppServiceProvider.php
+    ├── AppServiceProvider.php
+    └── Filament/AdminPanelProvider.php   # panel /admin
 
 resources/
 ├── views/
@@ -103,16 +111,19 @@ routes/
 
 tests/
 ├── Unit/CartServiceTest.php
-└── Feature/{HomePageTest,ProductPageTest,CartTest}.php
+└── Feature/{HomePageTest,ProductPageTest,CartTest,AdminAccessTest}.php
 ```
 
 Aucun dossier `Actions/`, `Rules/`, `Repositories/`, `Mail/`, `Notifications/`,
-`Traits/`, `Filament/` n'existe pour l'instant. Créer ces dossiers seulement quand un
+`Traits/` n'existe pour l'instant. Créer ces dossiers seulement quand un
 besoin réel se présente, pas par anticipation.
 
 Le panier vit en session (pas de modèle `Cart` en base) via `App\Services\CartService`.
 L'intégration Stripe Checkout est branchée (`App\Services\CheckoutService`) mais nécessite
 les clés `STRIPE_KEY`/`STRIPE_SECRET` dans `.env` pour fonctionner réellement.
+
+L'accès au panel Filament (`/admin`) est réservé aux utilisateurs dont `is_admin` vaut
+`true` (`App\Models\User::canAccessPanel()`, interface `FilamentUser`).
 
 ## Conventions modèles
 
