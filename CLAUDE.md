@@ -57,6 +57,11 @@ npm run build  # production
 | Filament | ^4.0 | Panel d'administration (`/admin`) |
 | MySQL | — | Base de données de dev (`DB_CONNECTION=mysql`, base `laraveltambour`) |
 | Laravel Tinker | ^3.0 | REPL |
+| laravel-lang/lang | ^15.34 (dev) | Génère `lang/fr/*` (validation, auth, pagination) |
+
+Locale de l'application : `APP_LOCALE=fr` (`.env`). Le panel Filament utilise ses
+traductions françaises intégrées ; les messages de validation Laravel utilisent
+`lang/fr/*.php` généré via `php artisan lang:add fr`.
 
 **Non installés actuellement** (mentionnés dans une ancienne version de ce fichier, à
 réintroduire ici seulement une fois réellement ajoutés au projet) : Livewire, Volt,
