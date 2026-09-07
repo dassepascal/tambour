@@ -3,6 +3,11 @@
 @section('title', 'Tambour — Tambours chamaniques faits main')
 
 @section('content')
+    <section class="w-full">
+        <img src="{{ asset('images/hero-tambour.jpg') }}" alt="Musicien jouant du tambour, entouré de plumes colorées"
+             class="h-[45vh] w-full object-cover sm:h-[55vh]">
+    </section>
+
     <section class="mx-auto max-w-6xl px-6 pt-16 pb-20 text-center">
         <h1 class="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
             Des tambours chamaniques façonnés à la main, pour retrouver votre rythme intérieur

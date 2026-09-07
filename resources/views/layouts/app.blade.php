@@ -9,7 +9,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-stone-50 text-stone-900 antialiased">
-        <header class="border-b border-stone-200">
+        <header class="border-b border-stone-200" x-data="{ mobileMenuOpen: false }">
             <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
                 <a href="{{ route('home') }}" class="text-lg font-semibold tracking-wide">Tambour</a>
 
@@ -29,8 +29,24 @@
                     <a href="{{ route('cart.show') }}" class="rounded-full border border-stone-300 px-4 py-2 text-sm hover:border-stone-400">
                         Panier
                     </a>
+
+                    <button type="button" @click="mobileMenuOpen = !mobileMenuOpen" class="-mr-2 flex h-9 w-9 items-center justify-center sm:hidden" aria-label="Ouvrir le menu">
+                        <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <svg x-show="mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="display: none;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
                 </div>
             </div>
+
+            <nav x-show="mobileMenuOpen" x-transition @click.outside="mobileMenuOpen = false" class="border-t border-stone-200 sm:hidden" style="display: none;">
+                <div class="flex flex-col px-6 py-4 text-sm">
+                    <a href="{{ route('home') }}" class="py-2 hover:text-stone-600">Accueil</a>
+                    <a href="{{ route('products.tambours') }}" class="py-2 hover:text-stone-600">Tambours</a>
+                    <a href="{{ route('products.accessoires') }}" class="py-2 hover:text-stone-600">Accessoires</a>
+                    <a href="{{ route('guide') }}" class="py-2 hover:text-stone-600">Guide</a>
+                    <a href="{{ route('about') }}" class="py-2 hover:text-stone-600">À propos</a>
+                    <a href="{{ route('filament.admin.auth.login') }}" class="py-2 hover:text-stone-600">Connexion</a>
+                </div>
+            </nav>
         </header>
 
         @if (session('success'))
@@ -86,5 +102,7 @@
                 </div>
             </div>
         </footer>
+
+        @stack('scripts')
     </body>
 </html>
