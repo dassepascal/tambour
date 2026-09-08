@@ -6,21 +6,7 @@
     <section class="mx-auto max-w-6xl px-6 py-16">
         <div class="grid gap-12 lg:grid-cols-2">
             <div>
-                <div class="aspect-square overflow-hidden rounded-2xl bg-stone-100">
-                    @if ($product->coverImage())
-                        <img src="{{ $product->coverImage()->getUrl() }}" alt="{{ $product->title }}" class="h-full w-full object-cover">
-                    @endif
-                </div>
-
-                @if ($product->getMedia('gallery')->count() > 1)
-                    <div class="mt-4 grid grid-cols-4 gap-3">
-                        @foreach ($product->getMedia('gallery')->skip(1) as $media)
-                            <div class="aspect-square overflow-hidden rounded-lg bg-stone-100">
-                                <img src="{{ $media->getUrl() }}" alt="{{ $product->title }}" class="h-full w-full object-cover">
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
+                <x-product-viewer :product="$product" />
             </div>
 
             <div>

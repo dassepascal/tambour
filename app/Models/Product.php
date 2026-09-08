@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -44,6 +45,7 @@ class Product extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery');
+        $this->addMediaCollection('spin');
         $this->addMediaCollection('sound')->singleFile();
     }
 
@@ -63,5 +65,13 @@ class Product extends Model implements HasMedia
     public function soundFile(): ?Media
     {
         return $this->getFirstMedia('sound');
+    }
+
+    /**
+     * @return Collection<int, Media>
+     */
+    public function spinImages(): Collection
+    {
+        return $this->getMedia('spin');
     }
 }

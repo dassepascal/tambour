@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ProductForm
 {
@@ -21,7 +24,9 @@ class ProductForm
                     ->required(),
                 TextInput::make('title')
                     ->label('Titre')
-                    ->required(),
+                    ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $state, callable $set) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->label('Slug')
                     ->required(),
@@ -58,6 +63,32 @@ class ProductForm
                     ->required(),
                 DateTimePicker::make('published_at')
                     ->label('Publié le'),
+                Section::make('Galerie photo')
+                    ->description('La première image sert de photo principale sur la fiche produit.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('gallery')
+                            ->collection('gallery')
+                            ->label('Images')
+                            ->image()
+                            ->multiple()
+                            ->reorderable()
+                            ->appendFiles()
+                            ->maxFiles(10),
+                    ])
+                    ->columnSpanFull(),
+                Section::make('Vue à 360°')
+                    ->description('Ajoutez une série de photos prises tout autour du tambour (12 à 36 images) pour activer la vue 360° sur la fiche produit.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('spin')
+                            ->collection('spin')
+                            ->label('Images 360°')
+                            ->image()
+                            ->multiple()
+                            ->reorderable()
+                            ->appendFiles()
+                            ->maxFiles(36),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }

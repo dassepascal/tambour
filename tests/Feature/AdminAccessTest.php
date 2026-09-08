@@ -33,3 +33,13 @@ test('un visiteur non authentifié est redirigé vers la connexion', function ()
 
     $response->assertRedirect('/admin/login');
 });
+
+test('un admin peut accéder au formulaire de création de produit', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+
+    $response = $this->actingAs($admin)->get('/admin/products/create');
+
+    $response->assertOk();
+    $response->assertSeeText('Galerie photo');
+    $response->assertSeeText('Vue à 360°');
+});
